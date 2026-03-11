@@ -7,10 +7,28 @@ const cartItemSchema = new mongoose.Schema({
     required: true,
   },
 
+  name: {
+    type: String,
+    required: true,
+  },
+
+  image: {
+    type: String,
+  },
+
+  price: {
+    type: Number,
+    required: true,
+  },
+
   quantity: {
     type: Number,
     required: true,
     default: 1,
+  },
+
+  totalPrice: {
+    type: Number,
   },
 });
 
@@ -23,6 +41,11 @@ const cartSchema = new mongoose.Schema(
     },
 
     items: [cartItemSchema],
+
+    cartTotal: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true },
 );
