@@ -10,7 +10,7 @@ const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/", protect, addToCart);
+router.post("/add", protect, addToCart);
 router.get("/", protect, getCart);
 router.delete("/:productId", protect, removeCartItem);
 router.delete("/", protect, clearCart);
