@@ -40,4 +40,34 @@ const getAllOrders = async (req, res) => {
   res.json(orders);
 };
 
-module.exports = { createOrder, getUserOrders, getAllOrders };
+const updateOrderStatus = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+      order.status = req.body.status || order.status;
+      // If status is Delivered, you might want to set a deliveredAt date
+      if (req.body.status === "Delivered") {
+        order.isDelivered = true;
+        order.deliveredAt = Date.now();
+      }
+
+      const updatedOrder = await order.save();
+      res.json(updatedOrder);
+    } else {
+      res.status(404).json({ message: "Order not found" });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Update status failed", error: error.message });
+  }
+};
+
+// Don't forget to export it!
+module.exports = {
+  createOrder,
+  getUserOrders,
+  getAllOrders,
+  updateOrderStatus,
+};
