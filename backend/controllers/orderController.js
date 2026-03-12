@@ -45,8 +45,10 @@ const updateOrderStatus = async (req, res) => {
     const order = await Order.findById(req.params.id);
 
     if (order) {
-      order.status = req.body.status || order.status;
-      // If status is Delivered, you might want to set a deliveredAt date
+      // FIX: Use orderStatus to match your mongoose schema
+      order.orderStatus = req.body.status || order.orderStatus;
+
+      // Update delivered flags if status is Delivered
       if (req.body.status === "Delivered") {
         order.isDelivered = true;
         order.deliveredAt = Date.now();
