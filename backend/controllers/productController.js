@@ -80,54 +80,35 @@ const allProductsToAdmin = async (req, res) => {
   res.json(products);
 };
 
-/**
- * USER: Get products with pagination & filter
- */
-// const getProducts = async (req, res) => {
-//   try {
-//     const { category, page = 1, limit = 6 } = req.query;
-//     const skip = (page - 1) * limit;
-
-//     let query = {};
-//     if (category) query.category = category; // Vegetable / Fruit
-
-//     const products = await Product.find(query).skip(skip).limit(Number(limit));
-
-//     const totalCount = await Product.countDocuments(query);
-
-//     res.json({ success: true, products, totalCount });
-//   } catch (error) {
-//     res.status(500).json({ message: "Server Error", error: error.message });
-//   }
-// };
-
 const getProducts = async (req, res) => {
   try {
-    // 1️⃣ Get query params
-    const { category, page = 1, limit = 6, sort } = req.query;
+    const { category, page = 1, limit = 9, sort, search } = req.query; // Added search
     const skip = (page - 1) * limit;
 
-    // 2️⃣ Build query filter
     let query = {};
-    if (category) {
-      query.category = { $regex: category, $options: "i" }; // case-insensitive search
+
+    // Category Filter
+    if (category && category !== "All") {
+      query.category = { $regex: category, $options: "i" };
     }
 
-    // 3️⃣ Build sort object
-    let sortOption = {};
-    if (sort === "asc") sortOption.pricePerKg = 1;
-    else if (sort === "desc") sortOption.pricePerKg = -1;
+    // Search Filter (NEW: Search through all products in DB)
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
 
-    // 4️⃣ Fetch products with filter, sort, and pagination
+    let sortOption = {};
+    if (sort === "Price: Low to High") sortOption.price = 1;
+    else if (sort === "Price: High to Low") sortOption.price = -1;
+    else sortOption.createdAt = -1;
+
     const products = await Product.find(query)
       .sort(sortOption)
       .skip(skip)
       .limit(Number(limit));
 
-    // 5️⃣ Get total count for pagination
     const totalCount = await Product.countDocuments(query);
 
-    // 6️⃣ Return response
     res.json({ success: true, products, totalCount });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
