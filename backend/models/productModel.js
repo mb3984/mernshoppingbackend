@@ -28,6 +28,7 @@ const productSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
+      // UPDATED: Added Fashion, Toys, and Sports
       enum: [
         "Electronics",
         "Fruits",
@@ -37,7 +38,22 @@ const productSchema = new mongoose.Schema(
         "Appliances",
         "Watches",
         "Drinks",
+        "Fashion",
+        "Toys",
+        "Sports",
       ],
+    },
+
+    // NEW: Added sizes for Fashion/Sports items (e.g., ["S", "M", "L"] or ["6", "7", "8"])
+    sizes: {
+      type: [String],
+      default: [],
+    },
+
+    // NEW: Added colors for Fashion items (e.g., ["Red", "Blue"])
+    colors: {
+      type: [String],
+      default: [],
     },
 
     price: {
